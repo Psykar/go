@@ -6,6 +6,7 @@ package modcmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"cmd/go/internal/base"
@@ -16,7 +17,7 @@ import (
 )
 
 var cmdDownload = &base.Command{
-	UsageLine: "go mod download [-json] [modules]",
+	UsageLine: "go mod download [-json] [-rwmoddir] [modules]",
 	Short:     "download modules to local cache",
 	Long: `
 Download downloads the named modules, which can be module patterns selecting
@@ -49,9 +50,11 @@ See 'go help modules' for more about module queries.
 }
 
 var downloadJSON = cmdDownload.Flag.Bool("json", false, "")
+var rwmoddir = cmdDownload.Flag.Bool("rwmoddir", false, "")
 
 func init() {
 	cmdDownload.Run = runDownload // break init cycle
+	base.AddKnownFlag("rwmoddir")
 }
 
 type moduleJSON struct {
@@ -120,6 +123,7 @@ func runDownload(cmd *base.Command, args []string) {
 			m.Error = err.Error()
 			return
 		}
+		fmt.Println("rwmoddir: ", *rwmoddir)
 	})
 
 	if *downloadJSON {

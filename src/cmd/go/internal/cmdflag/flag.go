@@ -158,3 +158,19 @@ func FindGOFLAGS(defns []*Defn) []string {
 	}
 	return flags
 }
+
+func InGOFLAGS(flag string) bool {
+	for _, goflag := range base.GOFLAGS() {
+		name := goflag
+		if strings.HasPrefix(name, "--") {
+			name = name[1:]
+		}
+		if i := strings.Index(name, "="); i >= 0 {
+			name = name[:i]
+		}
+		if name == flag {
+			return true
+		}
+	}
+	return false
+}

@@ -50,6 +50,7 @@ func InitGOFLAGS() {
 			walkFlags(sub)
 		}
 		cmd.Flag.VisitAll(func(f *flag.Flag) {
+			Errorf("Adding %s %s", cmd.Name, f.Name)
 			knownFlag[f.Name] = true
 		})
 	}
@@ -89,6 +90,7 @@ func InitGOFLAGS() {
 			if hideErrors {
 				continue
 			}
+			Errorf("commands %s", knownFlag)
 			Fatalf("go: parsing $GOFLAGS: unknown flag -%s", name)
 		}
 	}

@@ -9,13 +9,13 @@ package work
 import (
 	"cmd/go/internal/base"
 	"cmd/go/internal/cfg"
+	"cmd/go/internal/cmdflag"
 	"cmd/go/internal/load"
 	"cmd/internal/sys"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 func BuildInit() {
@@ -242,26 +242,10 @@ func buildModeInit() {
 	case "":
 		// ok
 	case "readonly", "vendor":
-		if load.ModLookup == nil && !inGOFLAGS("-mod") {
+		if load.ModLookup == nil && !cmdflag.InGOFLAGS("-mod") {
 			base.Fatalf("build flag -mod=%s only valid when using modules", cfg.BuildMod)
 		}
 	default:
 		base.Fatalf("-mod=%s not supported (can be '', 'readonly', or 'vendor')", cfg.BuildMod)
 	}
-}
-
-func inGOFLAGS(flag string) bool {
-	for _, goflag := range base.GOFLAGS() {
-		name := goflag
-		if strings.HasPrefix(name, "--") {
-			name = name[1:]
-		}
-		if i := strings.Index(name, "="); i >= 0 {
-			name = name[:i]
-		}
-		if name == flag {
-			return true
-		}
-	}
-	return false
 }

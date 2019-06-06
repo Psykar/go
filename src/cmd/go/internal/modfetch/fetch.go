@@ -18,6 +18,7 @@ import (
 
 	"cmd/go/internal/base"
 	"cmd/go/internal/cfg"
+	"cmd/go/internal/cmdflag"
 	"cmd/go/internal/dirhash"
 	"cmd/go/internal/module"
 	"cmd/go/internal/par"
@@ -25,6 +26,7 @@ import (
 )
 
 var downloadCache par.Cache
+var rwModDir = cmdflag.InGOFLAGS("rwmoddir")
 
 // Download downloads the specific module version to the
 // local download cache and returns the name of the directory
@@ -126,7 +128,10 @@ func download(mod module.Version, dir string) (err error) {
 
 	// Make dir read-only only *after* renaming it.
 	// os.Rename was observed to fail for read-only directories on macOS.
-	makeDirsReadOnly(dir)
+	fmt.Println("!!!!! READONLY IS :: ", rwModDir)
+	if !(rwModDir) {
+		makeDirsReadOnly(dir)
+	}
 	return nil
 }
 
